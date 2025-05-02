@@ -18,7 +18,7 @@ export class BudgetController {
     }
 
     static getById = async (req: Request, res: Response) => {
-        console.log('desde /api/budgets/id')
+        res.json(req.budget)
     }
 
     static create = async (req: Request, res: Response) => {
@@ -33,10 +33,12 @@ export class BudgetController {
     }
 
     static updateById = async (req: Request, res: Response) => {
-        console.log('desde /api/budgets/id')
+        await req.budget.update(req.body)
+        res.json('actualizado corrctamente')
     }
 
     static deleteById = async (req: Request, res: Response) => {
-        console.log('desde /api/budgets/id')
+        await req.budget.destroy()
+        res.json('Presupuesto eliminado correctamente')
     }
 }

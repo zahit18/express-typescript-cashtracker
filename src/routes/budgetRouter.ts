@@ -1,25 +1,28 @@
 import { Router } from 'express'
-import { body } from 'express-validator'
+import { body, param } from 'express-validator'
 import { BudgetController } from '../controllers/BudgetController'
 import { handleInputErrors } from '../middleware/validation'
+import { existBudgetId, validateBudgetId, validateBudgetInput } from '../middleware/budget'
 
 const router = Router()
 
+router.param('budgetId', validateBudgetId)
+router.param('budgetId', existBudgetId)
+
 router.get('/', BudgetController.getAll)
-router.get('/:id', BudgetController.getById)
+
+router.get('/:budgetId', BudgetController.getById)
 
 router.post('/',
-    body('name')
-        .notEmpty().withMessage('El nombre no puede ir vacio'),
-    body('amount')
-        .notEmpty().withMessage('La cantida no puede ir vacia')
-        .isNumeric().withMessage('Cantidad no valida')
-        .custom(value => value > 0).withMessage('El presupuesto debe ser mayor a 0'),
-        handleInputErrors,
+    validateBudgetInput,
     BudgetController.create
 )
 
-router.put('/:id', BudgetController.updateById)
-router.delete('/:id', BudgetController.deleteById)
+router.put('/:budgetId',
+    validateBudgetInput,
+    BudgetController.updateById
+)
+
+router.delete('/:budgetId', BudgetController.deleteById)
 
 export default router
