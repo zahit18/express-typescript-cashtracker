@@ -5,6 +5,14 @@ import { generateToken } from '../utils/token'
 import { AuthEmails } from '../emails/AuthEmail'
 import { generateJWT } from '../utils/jwt'
 
+declare global {
+    namespace Express {
+        interface Request {
+            user?: User
+        }
+    }
+}
+
 export class AuthController {
 
     static create = async (req: Request, res: Response) => {
@@ -120,5 +128,9 @@ export class AuthController {
         await user.save()
 
         res.json('El password se modifico correctamente')
+    }
+
+    static user = async (req: Request, res: Response) => {
+        res.json(req.user)
     }
 }
