@@ -5,7 +5,8 @@ import Budget from '../models/Budget'
 declare global {
     namespace Express {
         interface Request {
-            budget?: Budget
+            budget?: Budget,
+            expense?: Expense
         }
     }
 }
@@ -26,14 +27,16 @@ export class ExpensesController {
     }
   
     static getById = async (req: Request, res: Response) => {
-
+        res.json(req.expense)
     }
 
     static updateById = async (req: Request, res: Response) => {
- 
+        await req.expense?.update(req.body)
+        res.json('Se actualizo correctamente')
     }
   
     static deleteById = async (req: Request, res: Response) => {
-
+        await req.expense?.destroy()
+        res.json('Gasto eliminado')
     }
 }

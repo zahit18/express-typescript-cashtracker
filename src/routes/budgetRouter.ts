@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { BudgetController } from '../controllers/BudgetController'
 import { existBudgetId, validateBudgetId, validateBudgetInput } from '../middleware/budget'
 import { ExpensesController } from '../controllers/ExpenseController'
-import { validateExpenseId, validateExpenseInput } from '../middleware/expense'
+import { existExpenseId, validateExpenseId, validateExpenseInput } from '../middleware/expense'
 import { handleInputErrors } from '../middleware/validation'
 
 const router = Router()
@@ -11,6 +11,7 @@ router.param('budgetId', validateBudgetId)
 router.param('budgetId', existBudgetId)
 
 router.param('expenseId', validateExpenseId)
+router.param('expenseId', existExpenseId)
 
 router.get('/', BudgetController.getAll)
 
@@ -38,7 +39,11 @@ router.post('/:budgetId/expenses',
 
 router.get('/:budgetId/expenses/:expenseId', ExpensesController.getById)
 
-router.put('/:budgetId/expenses/:expenseId', ExpensesController.updateById)
+router.put('/:budgetId/expenses/:expenseId', 
+    validateExpenseInput,
+    handleInputErrors,
+    ExpensesController.updateById
+)
 
 router.delete('/:budgetId/expenses/:expenseId', ExpensesController.deleteById)
 
