@@ -4,7 +4,7 @@ import { hashPassword } from '../utils/auth'
 import { generateToken } from '../utils/token'
 import { AuthEmails } from '../emails/AuthEmail'
 
-export class UserController {
+export class AuthController {
 
     static create = async (req: Request, res: Response) => {
 
@@ -32,4 +32,20 @@ export class UserController {
             res.status(500).json({ error: 'Hubo un error' })
         }
     }
+
+        static confirmAccount = async (req: Request, res: Response) => {
+            const { token } = req.body
+
+            const user = await User.findOne({where: { token }})
+            if(!user) {
+                const error = new Error('Token no valido')
+                res.status(401).json({error: error.message})
+            }
+
+            user.confirmed = true
+            user.token = null
+            await user.save()
+
+            res.json("Cuenta confirmada correctamente")
+        }
 }
