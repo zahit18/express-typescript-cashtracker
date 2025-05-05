@@ -9,7 +9,9 @@ export class BudgetController {
                 order: [
                     ['createdAt', 'DESC']
                 ],
-                // TDDO: Filtrar por el usuario
+                where: {
+                    userId: req.user.id
+                }
             })
 
             res.json(budgets)
@@ -29,6 +31,7 @@ export class BudgetController {
     static create = async (req: Request, res: Response) => {
         try {
             const budget = new Budget(req.body)
+            budget.userId = req.user.id
             await budget.save()
 
             res.status(201).json('Presupuesto creado correctamente')
