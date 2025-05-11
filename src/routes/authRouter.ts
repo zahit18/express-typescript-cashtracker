@@ -51,7 +51,7 @@ router.post('/validate-token',
         .isLength({ min: 6, max: 6 })
         .withMessage('Token no valido'),
     handleInputErrors,
-    AuthController.confirmAccount
+    AuthController.validateToken
 )
 
 router.post('/reset-password/:token',
