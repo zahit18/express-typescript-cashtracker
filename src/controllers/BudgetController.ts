@@ -42,7 +42,7 @@ export class BudgetController {
 
     static updateById = async (req: Request, res: Response) => {
         await req.budget.update(req.body)
-        res.json('actualizado corrctamente')
+        res.json('Presupuesto actualizado correctamente')
     }
 
     static deleteById = async (req: Request, res: Response) => {
