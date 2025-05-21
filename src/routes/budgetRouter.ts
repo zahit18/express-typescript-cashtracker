@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { BudgetController } from '../controllers/BudgetController'
 import { existBudgetId, hasAccess, validateBudgetId, validateBudgetInput } from '../middleware/budget'
 import { ExpensesController } from '../controllers/ExpenseController'
-import { existExpenseId, validateExpenseId, validateExpenseInput } from '../middleware/expense'
+import { existExpenseId, validateExpenseId, validateExpenseInput, belongToExpense } from '../middleware/expense'
 import { handleInputErrors } from '../middleware/validation'
 import { authenticate } from '../middleware/auth'
 
@@ -16,6 +16,7 @@ router.param('budgetId', hasAccess)
 
 router.param('expenseId', validateExpenseId)
 router.param('expenseId', existExpenseId)
+router.param('expenseId', belongToExpense)
 
 router.get('/', BudgetController.getAll)
 
@@ -35,7 +36,7 @@ router.delete('/:budgetId', BudgetController.deleteById)
 
 // Routes for Expenses
 
-router.post('/:budgetId/expenses', 
+router.post('/:budgetId/expenses',
     validateExpenseInput,
     handleInputErrors,
     ExpensesController.create
@@ -43,7 +44,7 @@ router.post('/:budgetId/expenses',
 
 router.get('/:budgetId/expenses/:expenseId', ExpensesController.getById)
 
-router.put('/:budgetId/expenses/:expenseId', 
+router.put('/:budgetId/expenses/:expenseId',
     validateExpenseInput,
     handleInputErrors,
     ExpensesController.updateById
