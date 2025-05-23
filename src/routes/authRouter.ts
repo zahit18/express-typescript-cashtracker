@@ -20,6 +20,16 @@ router.post('/create-account',
     AuthController.create
 )
 
+router.put('/update-account',
+    authenticate,
+    body('name')
+        .notEmpty().withMessage('El Nombre no puede ir vacio'),
+    body('email')
+        .isEmail().withMessage('E-mail no valido'),
+    handleInputErrors,
+    AuthController.updateCurrentUser
+)
+
 router.post('/confirm-account',
     body('token')
         .notEmpty()
@@ -75,7 +85,7 @@ router.post('/update-password',
     body('current_password')
         .notEmpty().withMessage('El password actual no puede ir vacio'),
     body('password')
-        .isLength({min: 8}).withMessage('El password nuevo es muy corto, minimo 8 caracteres'),
+        .isLength({ min: 8 }).withMessage('El password nuevo es muy corto, minimo 8 caracteres'),
     handleInputErrors,
     AuthController.updateCurrentUserPassword
 )

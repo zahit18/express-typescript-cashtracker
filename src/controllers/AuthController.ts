@@ -42,6 +42,32 @@ export class AuthController {
         }
     }
 
+    static updateCurrentUser = async (req: Request, res: Response) => {
+        const { name, email } = req.body
+        const { id } = req.user
+
+        const user = await User.findByPk(id)
+
+        const emailExist = await User.findOne({ where: { email } })
+        if (emailExist) {
+            if (user.email !== email){
+                const error = new Error('Un Usuario con ese email ya esta registrado')
+                res.status(409).json({ error: error.message })
+            }
+        }
+
+        if (!user) {
+            const error = new Error('Usuario no encontrado')
+            res.status(404).json({ error: error.message })
+        }
+        user.name = name != '' ? name : user.name
+        user.email = email != '' ? email : user.email
+
+        await user.save()
+
+        res.json("Actualizado correctamente")
+    }
+
     static confirmAccount = async (req: Request, res: Response) => {
         const { token } = req.body
 
@@ -144,9 +170,9 @@ export class AuthController {
         const user = await User.findByPk(id)
 
         const isPasswordCorrect = await checkPassword(current_password, user.password)
-        if(!isPasswordCorrect) {
+        if (!isPasswordCorrect) {
             const error = new Error('El password actual es incorrecto')
-            res.status(401).json({error: error.message})
+            res.status(401).json({ error: error.message })
         }
 
         user.password = await hashPassword(password)
@@ -155,7 +181,7 @@ export class AuthController {
         res.json("El password se modifico correctamente")
     }
 
-    
+
     static checkCurrentUserPassword = async (req: Request, res: Response) => {
         const { password } = req.body
         const { id } = req.user
@@ -163,9 +189,9 @@ export class AuthController {
         const user = await User.findByPk(id)
 
         const isPasswordCorrect = await checkPassword(password, user.password)
-        if(!isPasswordCorrect) {
+        if (!isPasswordCorrect) {
             const error = new Error('El password actual es incorrecto')
-            res.status(401).json({error: error.message})
+            res.status(401).json({ error: error.message })
         }
 
         res.json("Password correcto")
